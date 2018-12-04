@@ -16,11 +16,11 @@ $this->on('cockpit.clearcache', function ()  {
 });
 
 // Add Redis entry to settings aside.
-$this->on('cockpit.settings.infopage.aside', function() {
+$this->on('cockpit.settings.infopage.aside.menu', function() {
   $this->renderView("rediscache:views/partials/redis-info-aside.php");
 });
 
 // Add Redis entry to settings main.
-$this->on('cockpit.settings.infopage.main', function() {
+$this->on('cockpit.settings.infopage.main.menu', function() {
   $this->renderView("rediscache:views/partials/redis-info-page.php");
 });

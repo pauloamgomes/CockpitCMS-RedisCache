@@ -71,10 +71,6 @@
     $this.cleaningRedis = false;
     $this.showKeys = false;
 
-    window.setTimeout(function() {
-      document.getElementById('settings-info').append(document.getElementById('redis-info'));
-    }, 50);
-
     this.on('mount', function() {
       this.loading = true;
 
