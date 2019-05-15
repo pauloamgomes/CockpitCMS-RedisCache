@@ -37,11 +37,22 @@ $this->on('after', function() use ($app) {
   // Check from config what we should to cache.
   $settings = $this->config['redis'];
 
-  if (!in_array(COCKPIT_ADMIN_ROUTE, array_keys($settings['cache_paths']))) {
-    return;
+  $ttl = 0;
+  if (in_array(COCKPIT_ADMIN_ROUTE, array_keys($settings['cache_paths']))) {
+    $ttl = $settings['cache_paths'][COCKPIT_ADMIN_ROUTE] ?? 60;
+  }
+  else {
+    foreach ($settings['cache_paths'] as $path => $_ttl) {
+      if (preg_match("#^" . strtr(preg_quote($path, '#'), ['\*' => '.*', '\?' => '.']) . "$#i", COCKPIT_ADMIN_ROUTE)) {
+        $ttl = $_ttl;
+        break;
+      }
+    }
+    if (!$ttl) {
+      return;
+    }
   }
 
-  $ttl = ($settings['cache_paths'][COCKPIT_ADMIN_ROUTE] ?? 60);
   $hash = trim(COCKPIT_ADMIN_ROUTE . '/' . md5(serialize($_REQUEST)), '/');
 
   $app->module('rediscache')->set($hash, $this->response->body, $ttl);
