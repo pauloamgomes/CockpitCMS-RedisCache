@@ -55,6 +55,12 @@ $this->module('rediscache')->extend([
     return ($_REQUEST['_bypass'] == $settings['bypass_token']);
   },
 
+  'clearCache' => function() {
+    if ($redis = $this->connect()) {
+      $redis->flushDb();
+    }
+  },
+
 ]);
 
 // Include admin.
@@ -62,12 +68,6 @@ if (COCKPIT_ADMIN && !COCKPIT_API_REQUEST) {
   include_once __DIR__ . '/admin.php';
 
   $this->module('rediscache')->extend([
-    'clearCache' => function() {
-      if ($redis = $this->connect()) {
-        $redis->flushDb();
-      }
-    },
-
     'getInfo' => function() {
       $config = $this->app->config['redis'];
       $info = [];
