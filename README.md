@@ -20,6 +20,8 @@ redis:
   port: <redis-port> # usually 6379
   bypass_token: 123456
   prefix: cockpit
+  cache_request_ignore:
+    - AWSALB
   cache_paths:
     /api/collections/get/page: 60
     /api/collections/get/post: 60
@@ -31,6 +33,7 @@ redis:
 * The **bypass_token** shall be a private token you generate to bypass the cache during requests (e.g. for performing tests).
 * The **prefix** can be used when using multiple instances of cockpit in same redis server.
 * The **cache_paths** are the API paths you want to cache and the ttl value (in seconds).
+* The **cache_request_ignore** is optional and can be useful in situations the request is modified by the server with random/dynamic values invalidating the cache. It can be filled with the server specific parameters.
 * Wildcards are supported in the paths
 
 ### Permissions

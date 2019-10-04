@@ -11,7 +11,11 @@ $this->on('before', function () use ($app) {
     return;
   }
 
-  $hash = trim(COCKPIT_ADMIN_ROUTE . '/' . md5(serialize($_REQUEST)), '/');
+  $settings = $this->config['redis'];
+  $ignore_params = $settings['cache_request_ignore'] ?? [];
+  $request = array_diff_key($_REQUEST, array_flip($ignore_params));
+
+  $hash = trim(COCKPIT_ADMIN_ROUTE . '/' . md5(serialize($request)), '/');
 
   if ($data = $app->module('rediscache')->get($hash)) {
     $this->response->body = $data;
@@ -53,7 +57,9 @@ $this->on('after', function() use ($app) {
     }
   }
 
-  $hash = trim(COCKPIT_ADMIN_ROUTE . '/' . md5(serialize($_REQUEST)), '/');
+  $ignore_params = $settings['cache_request_ignore'] ?? [];
+  $request = array_diff_key($_REQUEST, array_flip($ignore_params));
+  $hash = trim(COCKPIT_ADMIN_ROUTE . '/' . md5(serialize($request)), '/');
 
   $app->module('rediscache')->set($hash, $this->response->body, $ttl);
 
